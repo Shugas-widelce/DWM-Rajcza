@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pl" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dom Wspólnej Modlitwy – Rajcza</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0f0f0f;color:#eee;transition:background 0.5s,color 0.5s;}
+body[dir="rtl"]{font-family:'Arial',sans-serif;}
+
+/* NAV */
+nav{position:fixed;top:0;width:100%;z-index:200;background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:10px 24px;flex-wrap:wrap;gap:6px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.nav-logo{color:#fff;font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:0.5px;}
+.nav-right{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+.lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:4px 10px;border-radius:20px;cursor:pointer;font-size:0.75rem;transition:all 0.2s;}
+.lang-btn:hover,.lang-btn.active{background:var(--ac,#c08e51);border-color:var(--ac,#c08e51);}
+
+/* PAGES */
+.page{display:none;min-height:100vh;padding-top:60px;}
+.page.active{display:block;}
+
+/* ===== HOME PAGE ===== */
+#home{background:#0f0f0f;}
+.home-hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 20px 60px;position:relative;overflow:hidden;}
+.home-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 40%,rgba(192,142,81,0.15) 0%,transparent 60%),radial-gradient(ellipse at 70% 60%,rgba(36,125,0,0.1) 0%,transparent 60%);}
+.home-hero h1{font-size:clamp(2.2rem,5vw,4rem);color:#fff;font-weight:900;line-height:1.1;margin-bottom:16px;position:relative;}
+.home-hero h1 span{background:linear-gradient(90deg,#c08e51,#e8c97a,#9d4a06);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.home-motto{color:rgba(255,255,255,0.7);font-size:1.2rem;font-style:italic;margin-bottom:36px;position:relative;}
+.symbols-row{display:flex;gap:16px;font-size:2.2rem;margin-bottom:48px;position:relative;}
+
+/* Faith Cards on Home */
+.faiths-home{max-width:1100px;margin:0 auto;padding:60px 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;}
+.faith-home-card{border-radius:20px;padding:32px 28px;cursor:pointer;transition:transform 0.3s,box-shadow 0.3s;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.1);}
+.faith-home-card::before{content:'';position:absolute;inset:0;opacity:0.12;transition:opacity 0.3s;}
+.faith-home-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.5);}
+.faith-home-card:hover::before{opacity:0.2;}
+.fhc-icon{font-size:3rem;margin-bottom:14px;}
+.fhc-title{font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:8px;}
+.fhc-desc{font-size:0.88rem;color:rgba(255,255,255,0.65);line-height:1.6;margin-bottom:16px;}
+.fhc-btn{display:inline-block;padding:8px 20px;border-radius:30px;font-size:0.82rem;font-weight:700;color:#fff;border:1px solid rgba(255,255,255,0.4);transition:all 0.2s;}
+.fhc-btn:hover{background:rgba(255,255,255,0.15);}
+
+/* About strip */
+.home-about{background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07);padding:60px 20px;}
+.home-about-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;}
+.ha-card{text-align:center;padding:20px;}
+.ha-card .hi{font-size:2.2rem;margin-bottom:12px;}
+.ha-card h3{color:#e8c97a;font-size:1rem;margin-bottom:8px;}
+.ha-card p{font-size:0.85rem;color:rgba(255,255,255,0.55);line-height:1.6;}
+
+/* Reviews on home */
+.home-reviews{max-width:1100px;margin:0 auto;padding:60px 20px;}
+.sec-title{font-size:1.8rem;font-weight:800;color:#fff;margin-bottom:6px;text-align:center;}
+.sec-title span{background:linear-gradient(90deg,#c08e51,#e8c97a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sec-sub{text-align:center;color:rgba(255,255,255,0.45);margin-bottom:36px;font-size:0.95rem;}
+.divider{width:50px;height:3px;background:linear-gradient(90deg,#c08e51,#e8c97a);margin:10px auto 32px;border-radius:4px;}
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;}
+.review-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:22px;}
+.review-stars{color:#f5a623;font-size:1rem;margin-bottom:10px;}
+.review-text{font-size:0.88rem;color:rgba(255,255,255,0.7);line-height:1.6;font-style:italic;margin-bottom:14px;}
+.review-author{font-weight:700;color:#e8c97a;font-size:0.88rem;}
+.g-badge{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:0.73rem;color:rgba(255,255,255,0.35);}
+.g-dot{width:9px;height:9px;border-radius:50%;background:conic-gradient(#4285f4 0 25%,#ea4335 25% 50%,#fbbc05 50% 75%,#34a853 75%);display:inline-block;flex-shrink:0;}
+.gmaps-link{display:inline-flex;align-items:center;gap:8px;margin-top:28px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:10px 22px;border-radius:30px;font-size:0.85rem;font-weight:600;cursor:pointer;text-decoration:none;transition:background 0.2s;}
+.gmaps-link:hover{background:rgba(255,255,255,0.12);}
+.center{text-align:center;}
+
+/* Home footer */
+.home-footer{background:rgba(0,0,0,0.4);border-top:1px solid rgba(255,255,255,0.07);padding:28px 20px;text-align:center;}
+.home-footer p{color:rgba(255,255,255,0.3);font-size:0.8rem;line-height:2;}
+.home-footer a{color:#c08e51;text-decoration:none;}
+
+/* ===== FAITH PAGES ===== */
+.faith-page{min-height:100vh;}
+.fp-hero{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 30px 60px;position:relative;overflow:hidden;}
+.fp-hero::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.35);}
+.fp-hero-content{position:relative;z-index:1;}
+.fp-icon{font-size:4rem;margin-bottom:16px;}
+.fp-hero h1{font-size:clamp(2rem,5vw,3.5rem);color:#fff;font-weight:900;margin-bottom:12px;text-shadow:0 2px 20px rgba(0,0,0,0.5);}
+.fp-hero p{font-size:1.05rem;color:rgba(255,255,255,0.85);max-width:600px;margin:0 auto 24px;line-height:1.7;}
+.back-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:30px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);cursor:pointer;font-size:0.88rem;font-weight:600;transition:all 0.2s;text-decoration:none;}
+.back-btn:hover{background:rgba(255,255,255,0.25);}
+
+.fp-body{max-width:1100px;margin:0 auto;padding:60px 20px;}
+.fp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-bottom:50px;}
+.fp-card{border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,0.12);}
+.fp-card .fpc-icon{font-size:1.8rem;margin-bottom:10px;}
+.fp-card h3{font-size:1rem;font-weight:700;margin-bottom:8px;}
+.fp-card p{font-size:0.86rem;line-height:1.6;opacity:0.75;}
+
+.fp-events{margin-bottom:50px;}
+.fp-events h2{font-size:1.4rem;font-weight:800;margin-bottom:20px;}
+.events-row{display:flex;flex-wrap:wrap;gap:14px;}
+.ev-pill{padding:10px 18px;border-radius:30px;font-size:0.85rem;font-weight:600;border:1px solid rgba(255,255,255,0.2);}
+
+.fp-staff{margin-bottom:50px;}
+.fp-staff h2{font-size:1.4rem;font-weight:800;margin-bottom:20px;}
+.staff-row{display:flex;flex-wrap:wrap;gap:14px;}
+.staff-pill{padding:12px 20px;border-radius:14px;font-size:0.85rem;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:10px;}
+
+.fp-footer{border-top:1px solid rgba(255,255,255,0.1);padding:40px 20px;text-align:center;}
+.fp-footer p{opacity:0.4;font-size:0.8rem;line-height:2;}
+.fp-footer a{color:inherit;text-decoration:underline;opacity:0.7;}
+
+@media(max-width:600px){.symbols-row{gap:10px;font-size:1.6rem;}.faith-home-card{padding:22px 18px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="goHome()">🕊️ Dom Modlitwy · Rajcza</div>
+  <div class="nav-right">
+    <button class="lang-btn active" onclick="setLang('pl')">🇵🇱 PL</button>
+    <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="setLang('ar')">🇸🇦 AR</button>
+    <button class="lang-btn" onclick="setLang('he')">🇮🇱 HE</button>
+    <button class="lang-btn" onclick="setLang('ja')">🇯🇵 JA</button>
+  </div>
+</nav>
+
+<!-- ===== HOME PAGE ===== -->
+<div id="home" class="page active">
+  <div class="home-hero">
+    <div class="symbols-row">✝️ ☪️ ✡️ ⛩️ ☸️ 🕊️</div>
+    <h1 id="ht"><span id="ht-sp">Dom Wspólnej</span> Modlitwy</h1>
+    <div class="home-motto" id="hm">„Tu modli się każdy. Jak chce i kiedy chce."</div>
+  </div>
+
+  <div class="home-about">
+    <div class="home-about-inner">
+      <div class="ha-card"><div class="hi">🏠</div><h3 id="ha1h">Wielowyznaniowy</h3><p id="ha1p">Każde wyznanie ma własny budynek, ogród i park, aby każdy mógł modlić się w spokoju i komforcie.</p></div>
+      <div class="ha-card"><div class="hi">🕐</div><h3 id="ha2h">Otwarty 24/7</h3><p id="ha2p">Dostosowany do rytmu modlitw każdego wyznania – od Fajru przez Jutrznię po nocne czuwania.</p></div>
+      <div class="ha-card"><div class="hi">🌍</div><h3 id="ha3h">Dla każdego</h3><p id="ha3p">Chrześcijanin, muzułmanin, żyd, sintoista, buddysta – wszyscy znajdą tu swoje miejsce.</p></div>
+      <div class="ha-card"><div class="hi">🚽</div><h3 id="ha4h">Kapliczka w toalecie</h3><p id="ha4p">Nasza słynna kapliczka MB Medziugoryjskiej w toalecie. Bo modlitwa nie zna granic.</p></div>
+    </div>
+  </div>
+
+  <!-- Faith cards -->
+  <div class="faiths-home">
+    <div class="sec-title" id="fc-title" style="grid-column:1/-1;">Wybierz <span>swoje wyznanie</span></div>
+    <div class="divider" style="grid-column:1/-1;"></div>
+
+    <div class="faith-home-card" style="background:linear-gradient(135deg,rgba(157,74,6,0.35),rgba(192,142,81,0.2));" onclick="goFaith('christian')">
+      <div class="fhc-icon">✝️</div>
+      <div class="fhc-title" id="fc1t">Chrześcijaństwo</div>
+      <div class="fhc-desc" id="fc1d">Wszystkie odłamy – katolicyzm, prawosławie, protestantyzm i inne. Msze, drogi krzyżowe i pielgrzymki.</div>
+      <div class="fhc-btn" id="fc1b">Dowiedz się więcej →</div>
+    </div>
+    <div class="faith-home-card" style="background:linear-gradient(135deg,rgba(36,125,0,0.35),rgba(0,133,208,0.2));" onclick="goFaith('islam')">
+      <div class="fhc-icon">☪️</div>
+      <div class="fhc-title" id="fc2t">Islam</div>
+      <div class="fhc-desc" id="fc2d">Meczet z imamami polskimi i zagranicznymi. Modlitwy pięć razy dziennie, Ramadan, Umrah.</div>
+      <div class="fhc-btn" id="fc2b">Dowiedz się więcej →</div>
+    </div>
+    <div class="faith-home-card" style="background:linear-gradient(135deg,rgba(2,137,205,0.35),rgba(255,255,255,0.08));" onclick="goFaith('judaism')">
+      <div class="fhc-icon">✡️</div>
+      <div class="fhc-title" id="fc3t">Judaizm</div>
+      <div class="fhc-desc" id="fc3d">Synagoga z rabinem. Szabat co tydzień, modlitwy i święta żydowskie przez cały rok.</div>
+      <div class="fhc-btn" id="fc3b">Dowiedz się więcej →</div>
+    </div>
+    <div class="faith-home-card" style="background:linear-gradient(135deg,rgba(246,0,0,0.3),rgba(180,0,0,0.15));" onclick="goFaith('shinto')">
+      <div class="fhc-icon">⛩️</div>
+      <div class="fhc-title" id="fc4t">Shinto</div>
+      <div class="fhc-desc" id="fc4d">Japońska tradycja duchowa. Torii, ceremonialny ogród, rytuały oczyszczenia i święta sezonowe.</div>
+      <div class="fhc-btn" id="fc4b">Dowiedz się więcej →</div>
+    </div>
+    <div class="faith-home-card" style="background:linear-gradient(135deg,rgba(192,57,43,0.3),rgba(26,122,42,0.2));" onclick="goFaith('buddhism')">
+      <div class="fhc-icon">☸️</div>
+      <div class="fhc-title" id="fc5t">Buddyzm</div>
+      <div class="fhc-desc" id="fc5d">Medytacja, mindfulness i nauki Dharmy. Spokojna sala medytacyjna w otoczeniu natury Beskidów.</div>
+      <div class="fhc-btn" id="fc5b">Dowiedz się więcej →</div>
+    </div>
+    <div class="faith-home-card" style="background:linear-gradient(135deg,rgba(100,100,100,0.3),rgba(60,60,60,0.2));" onclick="goFaith('other')">
+      <div class="fhc-icon">🌍</div>
+      <div class="fhc-title" id="fc6t">Inne wyznania</div>
+      <div class="fhc-desc" id="fc6d">Hinduizm, sikhizm, taoizm i inne. Każda tradycja duchowa znajdzie tu swoją przestrzeń.</div>
+      <div class="fhc-btn" id="fc6b">Dowiedz się więcej →</div>
+    </div>
+  </div>
+
+  <!-- Reviews -->
+  <div class="home-reviews">
+    <div class="sec-title" id="rev-title">Opinie <span>Gości</span></div>
+    <div class="divider"></div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text" id="r1">"Spotkałem pana Grzegorza, który uratował cały dom modlitwy przed ogniem piekielnym ze świecznika."</div>
+        <div class="review-author">Andrzej Papierek</div>
+        <div class="g-badge"><span class="g-dot"></span> Google Maps</div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text" id="r2">"Przyszedłem się pomodlić, ale obok posągu Maryi Medziugoryjskiej tańczył przezabawny pan, nazywający się Fasola. Polecam."</div>
+        <div class="review-author">Tomasz Likier</div>
+        <div class="g-badge"><span class="g-dot"></span> Google Maps</div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text" id="r3">"Piękny obiekt. Spotkaliśmy pana Nawrockiego – bardzo w porządku gość. Obsługa miła i profesjonalna."</div>
+        <div class="review-author">Ekipa Wykręceni</div>
+        <div class="g-badge"><span class="g-dot"></span> Google Maps</div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text" id="r4">"Na otwarciu spotkałem pana D.T. i pana Cejrowskiego. Wymienili hydrofor, więc jest woda. Polecam serdecznie!"</div>
+        <div class="review-author">Jeżyk Wata</div>
+        <div class="g-badge"><span class="g-dot"></span> Google Maps</div>
+      </div>
+    </div>
+    <div class="center" style="margin-top:28px;">
+      <a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank" class="gmaps-link"><span class="g-dot"></span> <span id="more-rev">Zobacz wszystkie opinie na Google Maps</span></a>
+    </div>
+  </div>
+
+  <div class="home-footer">
+    <p id="hfooter">Dom Wspólnej Modlitwy w Rajczy © 2026 · Rajcza, woj. Śląskie, Polska<br>
+    Otwarty 24/7 · <a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank">Opinie Google Maps</a></p>
+  </div>
+</div>
+
+<!-- ===== FAITH PAGE TEMPLATE ===== -->
+<div id="faith-page" class="page faith-page">
+  <div class="fp-hero" id="fp-hero">
+    <div class="fp-hero-content">
+      <div class="fp-icon" id="fp-icon">✝️</div>
+      <h1 id="fp-title">Chrześcijaństwo</h1>
+      <p id="fp-intro">Opis wyznania...</p>
+      <button class="back-btn" onclick="goHome()">← <span id="fp-back">Strona główna</span></button>
+    </div>
+  </div>
+  <div class="fp-body" id="fp-body">
+    <!-- dynamically filled -->
+  </div>
+  <div class="fp-footer">
+    <p id="fp-footer">Dom Wspólnej Modlitwy w Rajczy © 2026 · Rajcza, woj. Śląskie<br>
+    <a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank">Opinie na Google Maps</a></p>
+  </div>
+</div>
+
+<script>
+// ─── TRANSLATIONS ─────────────────────────────────────────────
+const lang = {
+  pl:{
+    ht:'Dom Wspólnej Modlitwy', hm:'„Tu modli się każdy. Jak chce i kiedy chce."',
+    ha1h:'Wielowyznaniowy',ha1p:'Każde wyznanie ma własny budynek, ogród i park, aby każdy mógł modlić się w spokoju i komforcie.',
+    ha2h:'Otwarty 24/7',ha2p:'Dostosowany do rytmu modlitw każdego wyznania – od Fajru przez Jutrznię po nocne czuwania.',
+    ha3h:'Dla każdego',ha3p:'Chrześcijanin, muzułmanin, żyd, sintoista, buddysta – wszyscy znajdą tu swoje miejsce.',
+    ha4h:'Kapliczka w toalecie',ha4p:'Nasza słynna kapliczka MB Medziugoryjskiej w toalecie. Bo modlitwa nie zna granic.',
+    'fc-title':'Wybierz swoje wyznanie',
+    fc1t:'Chrześcijaństwo',fc1d:'Wszystkie odłamy – katolicyzm, prawosławie, protestantyzm i inne. Msze, drogi krzyżowe i pielgrzymki.',fc1b:'Dowiedz się więcej →',
+    fc2t:'Islam',fc2d:'Meczet z imamami polskimi i zagranicznymi. Modlitwy pięć razy dziennie, Ramadan, Umrah.',fc2b:'Dowiedz się więcej →',
+    fc3t:'Judaizm',fc3d:'Synagoga z rabinem. Szabat co tydzień, modlitwy i święta żydowskie przez cały rok.',fc3b:'Dowiedz się więcej →',
+    fc4t:'Shinto',fc4d:'Japońska tradycja duchowa. Torii, ceremonialny ogród, rytuały oczyszczenia i święta sezonowe.',fc4b:'Dowiedz się więcej →',
+    fc5t:'Buddyzm',fc5d:'Medytacja, mindfulness i nauki Dharmy. Spokojna sala medytacyjna w otoczeniu natury Beskidów.',fc5b:'Dowiedz się więcej →',
+    fc6t:'Inne wyznania',fc6d:'Hinduizm, sikhizm, taoizm i inne. Każda tradycja duchowa znajdzie tu swoją przestrzeń.',fc6b:'Dowiedz się więcej →',
+    'rev-title':'Opinie Gości',
+    r1:'"Spotkałem pana Grzegorza, który uratował cały dom modlitwy przed ogniem piekielnym ze świecznika."',
+    r2:'"Przyszedłem się pomodlić, ale obok posągu Maryi Medziugoryjskiej tańczył przezabawny pan Fasola. Polecam."',
+    r3:'"Piękny obiekt. Spotkaliśmy pana Nawrockiego – bardzo w porządku gość. Obsługa miła i profesjonalna."',
+    r4:'"Na otwarciu spotkałem pana D.T. i pana Cejrowskiego. Wymienili hydrofor, więc jest woda. Polecam!"',
+    'more-rev':'Zobacz wszystkie opinie na Google Maps',
+    hfooter:'Dom Wspólnej Modlitwy w Rajczy © 2026 · Rajcza, woj. Śląskie, Polska<br>Otwarty 24/7 · <a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank">Opinie Google Maps</a>',
+    'fp-back':'Strona główna',
+    'fp-footer':'Dom Wspólnej Modlitwy w Rajczy © 2026 · Rajcza, woj. Śląskie<br><a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank">Opinie na Google Maps</a>'
+  },
+  en:{
+    ht:'House of Common Prayer', hm:'"Everyone prays here. How they want and when they want."',
+    ha1h:'Interfaith',ha1p:'Each faith has its own building, garden and park so everyone can pray in peace and comfort.',
+    ha2h:'Open 24/7',ha2p:'Adapted to the prayer rhythms of every faith – from Fajr to Matins to night vigils.',
+    ha3h:'For Everyone',ha3p:'Christian, Muslim, Jew, Shintoist, Buddhist – everyone finds their place here.',
+    ha4h:'Chapel in the Restroom',ha4p:'Our famous Our Lady of Medjugorje chapel in the restroom. Because prayer knows no limits.',
+    'fc-title':'Choose your faith',
+    fc1t:'Christianity',fc1d:'All denominations – Catholicism, Orthodoxy, Protestantism and more. Masses, stations of the cross, pilgrimages.',fc1b:'Learn more →',
+    fc2t:'Islam',fc2d:'Mosque with Polish and international imams. Five daily prayers, Ramadan, Umrah.',fc2b:'Learn more →',
+    fc3t:'Judaism',fc3d:'Synagogue with a rabbi. Weekly Shabbat, prayers and Jewish holidays throughout the year.',fc3b:'Learn more →',
+    fc4t:'Shinto',fc4d:'Japanese spiritual tradition. Torii, ceremonial garden, purification rituals and seasonal festivals.',fc4b:'Learn more →',
+    fc5t:'Buddhism',fc5d:'Meditation, mindfulness and Dharma teachings. Peaceful meditation hall amid Beskidy nature.',fc5b:'Learn more →',
+    fc6t:'Other Faiths',fc6d:'Hinduism, Sikhism, Taoism and more. Every spiritual tradition finds its space here.',fc6b:'Learn more →',
+    'rev-title':'Guest Reviews',
+    r1:'"I met Mr. Grzegorz, who saved the entire prayer house from hellfire caused by a candlestick."',
+    r2:'"I came to pray, but next to the statue of Mary of Medjugorje a hilarious man named Fasola was dancing. Recommended."',
+    r3:'"Beautiful place. We met Mr. Nawrocki – a very decent fellow. Staff very friendly and professional."',
+    r4:'"At the opening I met Mr. D.T. and Mr. Cejrowski. They replaced the hydrofor so there\'s water. Highly recommended!"',
+    'more-rev':'See all reviews on Google Maps',
+    hfooter:'House of Common Prayer in Rajcza © 2026 · Rajcza, Silesian Voivodeship, Poland<br>Open 24/7 · <a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank">Google Maps Reviews</a>',
+    'fp-back':'Home',
+    'fp-footer':'House of Common Prayer in Rajcza © 2026 · Rajcza, Poland<br><a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank">Reviews on Google Maps</a>'
+  },
+  ar:{
+    ht:'بيت الصلاة المشترك', hm:'"هنا يصلي الجميع. كما يشاؤون ومتى يشاؤون."',
+    ha1h:'متعدد الأديان',ha1p:'لكل دين مبناه وحديقته الخاصة حتى يتسنى للجميع الصلاة بسلام وراحة.',
+    ha2h:'مفتوح 24/7',ha2p:'متكيف مع أوقات صلاة كل دين – من الفجر إلى صلاة الصبح وحتى الصلوات الليلية.',
+    ha3h:'للجميع',ha3p:'مسيحي، مسلم، يهودي، شينتوي، بوذي – الجميع يجدون مكانهم هنا.',
+    ha4h:'مصلى في الحمام',ha4p:'مصلى السيدة العذراء الشهير في الحمام. لأن الصلاة لا تعرف حدوداً.',
+    'fc-title':'اختر دينك',
+    fc1t:'المسيحية',fc1d:'جميع الطوائف – الكاثوليكية والأرثوذكسية والبروتستانتية وغيرها.',fc1b:'اعرف أكثر →',
+    fc2t:'الإسلام',fc2d:'مسجد مع أئمة بولنديين وأجانب. خمس صلوات يومياً، رمضان، عمرة.',fc2b:'اعرف أكثر →',
+    fc3t:'اليهودية',fc3d:'كنيس مع حاخام. السبت أسبوعياً وأعياد يهودية طوال العام.',fc3b:'اعرف أكثر →',
+    fc4t:'الشنتو',fc4d:'التقليد الروحي الياباني. طقوس التطهير والأعياد الموسمية.',fc4b:'اعرف أكثر →',
+    fc5t:'البوذية',fc5d:'تأمل وتعاليم الدارما. قاعة تأمل هادئة وسط طبيعة بيسكيدي.',fc5b:'اعرف أكثر →',
+    fc6t:'أديان أخرى',fc6d:'الهندوسية والسيخية والطاوية وغيرها. كل تقليد روحي يجد مكانه هنا.',fc6b:'اعرف أكثر →',
+    'rev-title':'آراء الزوار',
+    r1:'"قابلت السيد غرزيغورز الذي أنقذ البيت بأكمله من نار جهنم الناتجة عن شمعدان."',
+    r2:'"جئت للصلاة لكنني وجدت رجلاً مضحكاً يُدعى فاصولا يرقص بجانب تمثال مريم. أنصح بالزيارة."',
+    r3:'"مكان جميل. قابلنا السيد ناورتسكي – رجل محترم جداً. الخدمة ودودة ومهنية."',
+    r4:'"في حفل الافتتاح قابلت السيد D.T. والسيد تسيروفسكي. استبدلوا الهيدروفور فعاد الماء. أنصح بشدة!"',
+    'more-rev':'اطلع على جميع الآراء في خرائط Google',
+    hfooter:'بيت الصلاة المشترك في رايتشا © 2026 · رايتشا، بولندا<br>مفتوح 24/7 · <a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank">آراء Google Maps</a>',
+    'fp-back':'الرئيسية',
+    'fp-footer':'بيت الصلاة المشترك في رايتشا © 2026<br><a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank">الآراء على خرائط Google</a>'
+  },
+  he:{
+    ht:'בית התפילה המשותף', hm:'"כאן מתפלל כל אחד. איך שהוא רוצה ומתי שהוא רוצה."',
+    ha1h:'בין-דתי',ha1p:'לכל דת יש בניין וגן משלה כדי שכולם יוכלו להתפלל בשלווה ובנוחות.',
+    ha2h:'פתוח 24/7',ha2p:'מותאם לקצב התפילה של כל דת – מהפג\'ר ועד תפילות לילה.',
+    ha3h:'לכולם',ha3p:'נוצרי, מוסלמי, יהודי, שינטואיסט, בודהיסט – כולם מוצאים כאן את מקומם.',
+    ha4h:'מקדש בשירותים',ha4p:'מקדשנו המפורסם של מריה ממדג\'וגורי בשירותים. כי תפילה אינה מכירה גבולות.',
+    'fc-title':'בחרו את הדת שלכם',
+    fc1t:'נצרות',fc1d:'כל הזרמים – קתוליות, אורתודוקסיה, פרוטסטנטיות ועוד. מיסות, תחנות הצלב ועלייה לרגל.',fc1b:'למידע נוסף ←',
+    fc2t:'אסלאם',fc2d:'מסגד עם אימאמים פולנים ובינלאומיים. חמש תפילות ביום, רמדאן, עומרה.',fc2b:'למידע נוסף ←',
+    fc3t:'יהדות',fc3d:'בית כנסת עם רב. שבת שבועית ותפילות וחגים יהודיים לאורך כל השנה.',fc3b:'למידע נוסף ←',
+    fc4t:'שינטו',fc4d:'המסורת הרוחנית היפנית. טוריי, גן טקסי, טקסי טיהור וחגים עונתיים.',fc4b:'למידע נוסף ←',
+    fc5t:'בודהיזם',fc5d:'מדיטציה, מיינדפולנס ותורת הדהארמה. אולם מדיטציה שקט בטבע הבסקידים.',fc5b:'למידע נוסף ←',
+    fc6t:'דתות אחרות',fc6d:'הינדואיזם, סיקיזם, טאואיזם ועוד. כל מסורת רוחנית מוצאת כאן מקום.',fc6b:'למידע נוסף ←',
+    'rev-title':'חוות דעת אורחים',
+    r1:'"פגשתי את מר גז\'ז\'וש שהציל את בית התפילה כולו מאש גיהינום שנגרמה ממנורת נרות."',
+    r2:'"באתי להתפלל אבל ליד פסל מריה מימדג\'וגורי רקד גבר מצחיק בשם פאסולה. ממליץ."',
+    r3:'"מקום יפהפה. פגשנו את מר נאורוצקי – בחור מאוד נחמד. הצוות ידידותי ומקצועי."',
+    r4:'"בחנוכת הבית פגשתי את מר D.T. ואת מר צ\'ירובסקי. החליפו את ההידרופור, יש מים. ממליץ בחום!"',
+    'more-rev':'ראו את כל חוות הדעת ב-Google Maps',
+    hfooter:'בית התפילה המשותף בריאיצ\'ה © 2026 · ריאיצ\'ה, פולין<br>פתוח 24/7 · <a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank">חוות דעת Google Maps</a>',
+    'fp-back':'דף הבית',
+    'fp-footer':'בית התפילה המשותף בריאיצ\'ה © 2026<br><a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank">חוות דעת ב-Google Maps</a>'
+  },
+  ja:{
+    ht:'共同祈祷の家', hm:'「ここでは誰でも祈れる。好きな方法で、好きな時に。」',
+    ha1h:'多宗教対応',ha1p:'各宗教に専用の建物と公園があり、誰もが穏やかに祈れます。',
+    ha2h:'24時間365日開放',ha2p:'ファジュルから朝課まで、各宗教の祈りのリズムに合わせて開放。',
+    ha3h:'すべての人のために',ha3p:'キリスト教徒、ムスリム、ユダヤ教徒、神道信者、仏教徒──誰もが居場所を見つけられます。',
+    ha4h:'トイレの礼拝堂',ha4p:'トイレにあるメジュゴリェの聖母礼拝堂が名物。祈りに場所は関係ありません。',
+    'fc-title':'あなたの信仰を選んでください',
+    fc1t:'キリスト教',fc1d:'カトリック、正教会、プロテスタントなどすべての宗派。ミサ、十字架の道行き、巡礼。',fc1b:'詳しく見る →',
+    fc2t:'イスラム教',fc2d:'ポーランド人・海外イマームによるモスク。五行礼拝、ラマダン、ウムラ。',fc2b:'詳しく見る →',
+    fc3t:'ユダヤ教',fc3d:'ラビによるシナゴーグ。毎週の安息日と年間を通じたユダヤの祝日。',fc3b:'詳しく見る →',
+    fc4t:'神道',fc4d:'日本の精神的伝統。鳥居、儀式の庭、禊（みそぎ）と季節の祭り。',fc4b:'詳しく見る →',
+    fc5t:'仏教',fc5d:'瞑想、マインドフルネス、ダルマの教え。ベスキディ山地の自然に囲まれた静かな瞑想ホール。',fc5b:'詳しく見る →',
+    fc6t:'その他の宗教',fc6d:'ヒンドゥー教、シク教、道教など。あらゆる精神的伝統がここに居場所を見つけます。',fc6b:'詳しく見る →',
+    'rev-title':'来訪者の口コミ',
+    r1:'「燭台から出た業火から家全体を救ったグジェゴシュさんに会いました。」',
+    r2:'「祈りに来たら、聖母マリア像の隣でファソラという面白い方が踊っていました。おすすめです。」',
+    r3:'「美しい施設。ナウロツキさんに会いました──とても感じの良い方。スタッフも親切でプロフェッショナル。」',
+    r4:'「開設式でD.T.さんとツェイロフスキさんに会いました。ポンプを交換したので水も出ます。強くおすすめ！」',
+    'more-rev':'Google マップで全口コミを見る',
+    hfooter:'ライチャ共同祈祷の家 © 2026 · ライチャ、ポーランド<br>24時間365日開放 · <a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank">Google マップの口コミ</a>',
+    'fp-back':'ホーム',
+    'fp-footer':'ライチャ共同祈祷の家 © 2026<br><a href="https://share.google/Ml2N4f89KcK8wFhT7" target="_blank">Google マップの口コミ</a>'
+  }
+};
+
+// ─── FAITH DATA ────────────────────────────────────────────────
+const faithData = {
+  christian:{
+    icon:'✝️',
+    bg:'linear-gradient(160deg,#5a2800 0%,#9d4a06 40%,#c08e51 100%)',
+    c1:'#c08e51',c2:'#9d4a06',bodyBg:'#1a0d00',cardBg:'rgba(192,142,81,0.08)',textColor:'#ffe8c0',
+    ac:'#c08e51',
+    titles:{pl:'Chrześcijaństwo',en:'Christianity',ar:'المسيحية',he:'נצרות',ja:'キリスト教'},
+    intros:{
+      pl:'Witamy wszystkich chrześcijan – katolików, prawosławnych, protestantów i przedstawicieli każdego innego odłamu. Nasz kościół jest otwarty na wszystkie tradycje chrześcijańskie. Organizujemy msze, drogi krzyżowe, nabożeństwa maryjne i pielgrzymki w sercu Beskidów.',
+      en:'Welcome all Christians – Catholics, Orthodox, Protestants and every other denomination. Our church is open to all Christian traditions. We hold masses, stations of the cross, Marian devotions and pilgrimages in the heart of the Beskidy mountains.',
+      ar:'مرحباً بجميع المسيحيين – الكاثوليك والأرثوذكس والبروتستانت وجميع الطوائف الأخرى. كنيستنا مفتوحة لجميع التقاليد المسيحية.',
+      he:'ברוכים הבאים כל הנוצרים – קתולים, אורתודוקסים, פרוטסטנטים וכל כת אחרת. הכנסייה שלנו פתוחה לכל המסורות הנוצריות.',
+      ja:'カトリック、正教会、プロテスタントなどすべての宗派のキリスト教徒を歓迎します。私たちの教会はすべてのキリスト教の伝統に開かれています。'
+    },
+    cards:[
+      {icon:'⛪',titles:{pl:'Kościół',en:'Church',ar:'الكنيسة',he:'כנסייה',ja:'教会'},descs:{pl:'Piękna kaplica dostępna dla wszystkich wyznań chrześcijańskich. Msze codziennie.',en:'A beautiful chapel open to all Christian denominations. Daily masses.',ar:'كنيسة جميلة مفتوحة لجميع الطوائف. قداسات يومية.',he:'כנסייה יפה הפתוחה לכל הזרמים. מיסות יומיות.',ja:'すべての宗派に開かれた美しい礼拝堂。毎日ミサを行います。'}},
+      {icon:'🕯️',titles:{pl:'Kapliczka MB',en:'Marian Chapel',ar:'مصلى مريم',he:'קפלת מריה',ja:'マリア礼拝堂'},descs:{pl:'Słynna kapliczka Matki Boskiej Medziugoryjskiej – znajdziesz ją nawet w toalecie!',en:'The famous Our Lady of Medjugorje chapel – you\'ll find it even in the restroom!',ar:'مصلى السيدة العذراء الشهير – ستجده حتى في الحمام!',he:'קפלת מריה המפורסמת – תמצאו אותה אפילו בשירותים!',ja:'有名なメジュゴリェの聖母礼拝堂──トイレにもあります！'}},
+      {icon:'✝️',titles:{pl:'Droga Krzyżowa',en:'Stations of the Cross',ar:'درب الصليب',he:'תחנות הצלב',ja:'十字架の道行き'},descs:{pl:'Wielkopiątkowa procesja przez piękne tereny Rajczy. Wydarzenie otwarte dla wszystkich.',en:'Good Friday procession through the beautiful Rajcza area. Open to everyone.',ar:'موكب يوم الجمعة العظيمة في منطقة رايتشا الجميلة.',he:'תהלוכת יום שישי הגדול באזור רייצ\'ה היפה.',ja:'ライチャの美しいエリアを歩く聖金曜日の行列。'}},
+      {icon:'👨‍💼',titles:{pl:'Proboszcz',en:'Parish Priest',ar:'الكاهن',he:'כומר',ja:'司祭'},descs:{pl:'Doświadczony proboszcz do Waszej dyspozycji – spowiedź, ślub, chrzciny i inne sakramenty.',en:'Experienced parish priest at your service – confession, weddings, baptisms and other sacraments.',ar:'كاهن متمرس في خدمتكم – اعتراف، زواج، معمودية وأسرار أخرى.',he:'כומר מנוסה לשירותכם – וידוי, חתונה, טבילה וסקרמנטים נוספים.',ja:'ご奉仕する経験豊かな司祭──告解、結婚、洗礼など。'}},
+    ],
+    events:{pl:['Msza Święta (codziennie)','Droga Krzyżowa (Wielki Piątek)','Pielgrzymka do Częstochowy','Nabożeństwo Różańcowe','Wigilia i Boże Narodzenie','Święcenie pokarmów'],en:['Holy Mass (daily)','Stations of the Cross (Good Friday)','Pilgrimage to Częstochowa','Rosary Service','Christmas Eve & Christmas','Blessing of Easter Baskets'],ar:['قداس مقدس (يومياً)','درب الصليب (الجمعة العظيمة)','حج إلى جزنستوخوفا','صلاة الوردية','عشية الميلاد وعيد الميلاد','تبريك السلال الفصحية'],he:['מיסה קדושה (יומית)','תחנות הצלב (יום שישי הגדול)','עלייה לרגל לצ\'נסטוחובה','תפילת רוזריום','ערב חג המולד וחג המולד','ברכת סלי הפסחא'],ja:['ミサ（毎日）','十字架の道行き（聖金曜日）','チェンストホワへの巡礼','ロザリオの祈り','クリスマスイブとクリスマス','復活祭のバスケットの祝福']},
+    staffLabel:{pl:'Nasz Kapłan',en:'Our Clergy',ar:'كهنتنا',he:'הכמורה שלנו',ja:'聖職者'},
+    staff:[{icon:'✝️',names:{pl:'Proboszcz',en:'Parish Priest',ar:'الكاهن',he:'כומר',ja:'司祭'}},{icon:'🔥',names:{pl:'Pan Grzegorz (Ochrona 🌟)',en:'Mr. Grzegorz (Fire Hero 🌟)',ar:'السيد غرزيغورز (بطل الحريق 🌟)',he:'מר גז\'ז\'וש (גיבור אש 🌟)',ja:'グジェゴシュ氏（防火の英雄🌟）'}}]
+  },
+  islam:{
+    icon:'☪️',
+    bg:'linear-gradient(160deg,#003d00 0%,#247d00 40%,#0085d0 100%)',
+    c1:'#0085d0',c2:'#247d00',bodyBg:'#001a00',cardBg:'rgba(0,133,208,0.08)',textColor:'#c0f0ff',
+    ac:'#0085d0',
+    titles:{pl:'Islam',en:'Islam',ar:'الإسلام',he:'אסלאם',ja:'イスラム教'},
+    intros:{
+      pl:'As-salamu alaykum! Nasz meczet jest otwarty na wszystkich muzułmanów. Posiadamy polskich imamów oraz imamów z programu wymiany zagranicznej. Modlitwy pięć razy dziennie, kazania piątkowe, wspólne iftar w Ramadanie oraz pomoc w organizacji Umrah.',
+      en:'As-salamu alaykum! Our mosque is open to all Muslims. We have Polish imams and imams from our international exchange program. Five daily prayers, Friday sermons, communal iftar during Ramadan, and assistance organizing Umrah.',
+      ar:'السلام عليكم! مسجدنا مفتوح لجميع المسلمين. لدينا أئمة بولنديون وأئمة من برنامج التبادل الدولي. خمس صلوات يومياً وخطبة الجمعة وإفطار جماعي في رمضان ومساعدة في تنظيم العمرة.',
+      he:'אס-סלאמו עליכום! המסגד שלנו פתוח לכל המוסלמים. יש לנו אימאמים פולנים ואימאמים מתוכנית חילופים בינלאומית.',
+      ja:'アッサラーム・アライクム！私たちのモスクはすべてのムスリムに開かれています。ポーランド人イマームと国際交換プログラムのイマームが常駐しています。'
+    },
+    cards:[
+      {icon:'🕌',titles:{pl:'Meczet',en:'Mosque',ar:'المسجد',he:'מסגד',ja:'モスク'},descs:{pl:'Nowoczesny meczet z salą modlitewną dla mężczyzn i kobiet, miejscem do ablucji i biblioteką islamską.',en:'Modern mosque with prayer halls for men and women, ablution facilities and Islamic library.',ar:'مسجد حديث مع قاعات صلاة للرجال والنساء ومكان للوضوء ومكتبة إسلامية.',he:'מסגד מודרני עם אולמות תפילה לגברים ולנשים ומקום לנטילת ידיים.',ja:'男女別の礼拝ホール、洗浄施設、イスラム図書館を備えたモスク。'}},
+      {icon:'📿',titles:{pl:'Pięć Filarów',en:'Five Pillars',ar:'الأركان الخمسة',he:'חמשת עמודי האסלאם',ja:'五行'},descs:{pl:'Szahada, Salat (5 razy dziennie), Zakat, Sawm (post Ramadan), Hadżdż/Umrah – wszystko pod opieką naszych imamów.',en:'Shahada, Salat (5 times daily), Zakat, Sawm (Ramadan fasting), Hajj/Umrah – all under our imams\' guidance.',ar:'الشهادة والصلاة والزكاة والصوم والحج – كل ذلك تحت إشراف أئمتنا.',he:'שהאדה, צלאת, זכאת, צום רמדאן, חג\'ג\'/עומרה – הכל בהדרכת האימאמים שלנו.',ja:'シャハーダ、サラート（日5回）、ザカート、サウム（ラマダン断食）、ハッジ/ウムラ。'}},
+      {icon:'🌙',titles:{pl:'Ramadan',en:'Ramadan',ar:'رمضان',he:'רמדאן',ja:'ラマダン'},descs:{pl:'Wspólny Iftar każdego dnia Ramadanu, nocne modlitwy Tarawih i intensywny program duchowy.',en:'Communal Iftar every day of Ramadan, nightly Tarawih prayers and an intensive spiritual programme.',ar:'إفطار جماعي كل يوم من رمضان وصلاة التراويح الليلية وبرنامج روحي مكثف.',he:'איפטאר קבוצתי כל יום ברמדאן, תפילות תראוויח לילה וברנמגה רוחני אינטנסיבי.',ja:'ラマダン毎日の共同イフタール、夜のタラウィーフ礼拝、集中霊的プログラム。'}},
+      {icon:'🕋',titles:{pl:'Umrah',en:'Umrah',ar:'العمرة',he:'עומרה',ja:'ウムラ'},descs:{pl:'Finansujemy i organizujemy Umrah dla wiernych – skontaktuj się z naszym imamem, aby dowiedzieć się więcej.',en:'We fund and organise Umrah for believers – contact our imam to find out more.',ar:'نموّل وننظم العمرة للمؤمنين – تواصل مع إمامنا لمعرفة المزيد.',he:'אנחנו ממנים ומארגנים עומרה למאמינים – צרו קשר עם האימאם.',ja:'信者のウムラ費用を支援・手配します──詳細はイマームにご相談ください。'}},
+    ],
+    events:{pl:['Salat (5 razy dziennie)','Khutba piątkowa','Iftar (każdy dzień Ramadanu)','Tarawih (Ramadan)','Eid al-Fitr','Eid al-Adha','Organizacja Umrah'],en:['Salat (5 times daily)','Friday Khutba','Iftar (every day of Ramadan)','Tarawih (Ramadan)','Eid al-Fitr','Eid al-Adha','Umrah Organisation'],ar:['الصلاة (5 مرات يومياً)','خطبة الجمعة','الإفطار (كل يوم رمضان)','التراويح (رمضان)','عيد الفطر','عيد الأضحى','تنظيم العمرة'],he:['צלאת (5 פעמים ביום)','חוטבה ביום שישי','איפטאר (כל יום ברמדאן)','תראוויח (רמדאן)','עיד אל-פיטר','עיד אל-אד\'חא','ארגון עומרה'],ja:['サラート（日5回）','金曜フトバ','イフタール（ラマダン毎日）','タラウィーフ（ラマダン）','イード・アル＝フィトル','イード・アル＝アドハー','ウムラ手配']},
+    staffLabel:{pl:'Nasi Imamowie',en:'Our Imams',ar:'أئمتنا',he:'האימאמים שלנו',ja:'イマーム'},
+    staff:[{icon:'☪️',names:{pl:'Imam Polski',en:'Polish Imam',ar:'الإمام البولندي',he:'אימאם פולני',ja:'ポーランド人イマーム'}},{icon:'🌍',names:{pl:'Imam z wymiany',en:'Exchange Imam',ar:'إمام من التبادل',he:'אימאם מחילופים',ja:'交換イマーム'}}]
+  },
+  judaism:{
+    icon:'✡️',
+    bg:'linear-gradient(160deg,#003366 0%,#0289cd 50%,#7dd3fc 100%)',
+    c1:'#0289cd',c2:'#003366',bodyBg:'#00112a',cardBg:'rgba(2,137,205,0.1)',textColor:'#c0e8ff',
+    ac:'#0289cd',
+    titles:{pl:'Judaizm',en:'Judaism',ar:'اليهودية',he:'יהדות',ja:'ユダヤ教'},
+    intros:{
+      pl:'Shalom! Nasza synagoga jest otwarta na wszystkich wyznawców judaizmu – ortodoksyjnych, konserwatywnych i reformowanych. Rabin przewodniczy cotygodniowemu Szabatowi, modlitwom i żydowskim świętom przez cały rok.',
+      en:'Shalom! Our synagogue is open to all followers of Judaism – Orthodox, Conservative and Reform. Our rabbi presides over weekly Shabbat, prayers and Jewish holidays throughout the year.',
+      ar:'شالوم! كنيسنا مفتوح لجميع أتباع اليهودية. يترأس الحاخام السبت الأسبوعي والتفيلوت والأعياد اليهودية.',
+      he:'שלום! בית הכנסת שלנו פתוח לכל יהודי – אורתודוקסים, קונסרבטיבים ורפורמיים. הרב שלנו מנהל את השבת השבועית, את התפילות ואת החגים היהודיים.',
+      ja:'シャローム！私たちのシナゴーグは正統派、保守派、改革派すべてのユダヤ教徒に開かれています。ラビが毎週の安息日、礼拝、ユダヤの祝日を執り行います。'
+    },
+    cards:[
+      {icon:'🕍',titles:{pl:'Synagoga',en:'Synagogue',ar:'الكنيس',he:'בית הכנסת',ja:'シナゴーグ'},descs:{pl:'Tradycyjna synagoga z Torą, bimą i miejscem dla mężczyzn i kobiet. Koszer w naszej kuchni.',en:'Traditional synagogue with Torah, bimah and seating for men and women. Kosher kitchen on site.',ar:'كنيس تقليدي مع التوراة وبيما ومقاعد للرجال والنساء. مطبخ كوشير في المكان.',he:'בית כנסת מסורתי עם תורה, בימה ומושבים לגברים ולנשים. מטבח כשר באתר.',ja:'トーラー、ビーマー、男女別席を備えた伝統的なシナゴーグ。敷地内にコーシャーキッチン。'}},
+      {icon:'🕯️',titles:{pl:'Szabat',en:'Shabbat',ar:'السبت',he:'שבת',ja:'シャバット'},descs:{pl:'Cotygodniowy Szabat od piątku o zachodzie słońca do soboty. Zapalenie świec, kidusz, hawdala.',en:'Weekly Shabbat from Friday sundown to Saturday. Candle lighting, Kiddush, Havdalah.',ar:'السبت الأسبوعي من غروب الجمعة إلى السبت. إضاءة الشموع وقيدوش وهافدالاه.',he:'שבת שבועית מיום שישי בשקיעה עד שבת. הדלקת נרות, קידוש, הבדלה.',ja:'毎週金曜日の日没から土曜日の安息日。蝋燭の点火、キドゥシュ、ハブダラー。'}},
+      {icon:'📜',titles:{pl:'Tora i nauka',en:'Torah & Learning',ar:'التوراة والتعلم',he:'תורה ולימוד',ja:'トーラーと学習'},descs:{pl:'Regularne lekcje Tory, Talmudu i tradycji żydowskiej prowadzone przez naszego rabina.',en:'Regular Torah, Talmud and Jewish tradition classes led by our rabbi.',ar:'دروس منتظمة في التوراة والتلمود والتقاليد اليهودية.',he:'שיעורים קבועים בתורה, תלמוד ומסורת יהודית בהדרכת הרב.',ja:'ラビによる定期的なトーラー、タルムード、ユダヤの伝統の授業。'}},
+      {icon:'✡️',titles:{pl:'Bar/Bat Micwa',en:'Bar/Bat Mitzvah',ar:'بار/بات ميتسفا',he:'בר/בת מצווה',ja:'バル/バット・ミツワー'},descs:{pl:'Organizujemy ceremonie Bar i Bat Micwy z pełnym przygotowaniem przez rabina.',en:'We hold Bar and Bat Mitzvah ceremonies with full preparation led by our rabbi.',ar:'نقيم احتفالات بار/بات ميتسفا مع إعداد كامل.',he:'אנחנו עורכים טקסי בר/בת מצווה עם הכנה מלאה מהרב.',ja:'ラビによる充分な準備のもとバル/バット・ミツワーを執り行います。'}},
+    ],
+    events:{pl:['Kabbalat Szabat (co piątek)','Rosz Haszana (Nowy Rok)','Jom Kipur (Dzień Pojednania)','Sukot','Chanuka','Pesach','Purim'],en:['Kabbalat Shabbat (every Friday)','Rosh Hashana (New Year)','Yom Kippur (Day of Atonement)','Sukkot','Hanukkah','Passover','Purim'],ar:['قبالات شبات (كل جمعة)','روش هاشانا (رأس السنة)','يوم كيبور (يوم الكفارة)','سوكوت','حانوكا','الفصح','بوريم'],he:['קבלת שבת (כל שישי)','ראש השנה','יום כיפור','סוכות','חנוכה','פסח','פורים'],ja:['カバラット・シャバット（毎週金曜）','ロシュ・ハシャナー（新年）','ヨム・キプール（贖罪の日）','スコット','ハヌカー','ペサハ','プリム']},
+    staffLabel:{pl:'Nasz Rabin',en:'Our Rabbi',ar:'حاخامنا',he:'הרב שלנו',ja:'ラビ'},
+    staff:[{icon:'✡️',names:{pl:'Rabin',en:'Rabbi',ar:'الحاخام',he:'רב',ja:'ラビ'}}]
+  },
+  shinto:{
+    icon:'⛩️',
+    bg:'linear-gradient(160deg,#6a0000 0%,#c0001a 40%,#f60000 100%)',
+    c1:'#f60000',c2:'#8a0000',bodyBg:'#1a0000',cardBg:'rgba(246,0,0,0.08)',textColor:'#ffd0d0',
+    ac:'#f60000',
+    titles:{pl:'Shinto',en:'Shinto',ar:'الشنتو',he:'שינטו',ja:'神道'},
+    intros:{
+      pl:'Witamy w naszej świątyni shintoistycznej – jedynej w Polsce! Shinto to japońska tradycja duchowa łącząca człowieka z naturą i kami (bóstwami). Nasz ceremonialny ogród z torii i koi to miejsce spokoju i oczyszczenia pośród Beskidów.',
+      en:'Welcome to our Shinto shrine – the only one in Poland! Shinto is a Japanese spiritual tradition connecting humans with nature and kami (deities). Our ceremonial garden with torii and koi is a place of peace and purification amid the Beskidy mountains.',
+      ar:'مرحباً بكم في معبدنا الشنتوي – الوحيد في بولندا! الشنتو هو تقليد روحي ياباني يربط الإنسان بالطبيعة والكامي.',
+      he:'ברוכים הבאים למקדש השינטו שלנו – היחיד בפולין! שינטו היא מסורת רוחנית יפנית המחברת בין האדם לטבע ולקאמי.',
+      ja:'神道の神社へようこそ──ポーランド唯一の神社です！神道は人間と自然と神々を結ぶ日本の精神的伝統です。鳥居と鯉のいる儀式の庭はベスキディ山地の中の平和と浄化の場所です。'
+    },
+    cards:[
+      {icon:'⛩️',titles:{pl:'Torii i Ogród',en:'Torii & Garden',ar:'توريي والحديقة',he:'טוריי וגן',ja:'鳥居と庭'},descs:{pl:'Tradycyjne torii na wejściu i ogród zen z kamieniami, bambusem i stawem koi.',en:'Traditional torii at the entrance and a zen garden with stones, bamboo and a koi pond.',ar:'توريي تقليدي عند المدخل وحديقة زن مع الحجارة والخيزران وبركة كوي.',he:'טוריי מסורתי בכניסה וגן זן עם אבנים, במבוק ובריכת קוי.',ja:'入り口の伝統的な鳥居と石・竹・鯉池のある禅の庭。'}},
+      {icon:'💧',titles:{pl:'Misogi (Oczyszczenie)',en:'Misogi (Purification)',ar:'ميسوغي (التطهير)',he:'מיסוגי (טיהור)',ja:'禊（みそぎ）'},descs:{pl:'Rytualne oczyszczenie wodą przed modlitwą. Harae – ceremonia usuwania nieczystości i grzechu.',en:'Ritual purification with water before prayer. Harae – ceremony of removing impurity and sin.',ar:'التطهير الطقسي بالماء قبل الصلاة. هاراي – مراسم إزالة النجاسة.',he:'טיהור טקסי במים לפני תפילה. הראה – טקס הסרת טומאה.',ja:'祈りの前の水による儀式的な浄め。大祓（おおはらえ）──穢れと罪を除く儀式。'}},
+      {icon:'🎋',titles:{pl:'Omamori',en:'Omamori',ar:'أوماموري',he:'אומאמורי',ja:'お守り'},descs:{pl:'Tradycyjne japońskie amulety ochronne dostępne w naszym sklepiku przy świątyni.',en:'Traditional Japanese protective charms available at our shrine shop.',ar:'تمائم يابانية تقليدية متاحة في متجر المعبد.',he:'קמעות יפניות מסורתיות זמינות בחנות המקדש.',ja:'神社のショップで伝統的なお守りをお求めいただけます。'}},
+      {icon:'🥁',titles:{pl:'Taiko i ceremonii',en:'Taiko & Ceremonies',ar:'الطبل والمراسم',he:'תייקו וטקסים',ja:'太鼓と儀式'},descs:{pl:'Sezonowe festiwale (matsuri) z muzyką taiko, tańcem i rytuałami.',en:'Seasonal festivals (matsuri) with taiko drumming, dance and rituals.',ar:'مهرجانات موسمية (ماتسوري) مع طبل التايكو والرقص والطقوس.',he:'פסטיבלים עונתיים (מאטסורי) עם תיפוף טייקו, ריקוד וטקסים.',ja:'太鼓演奏、舞踊、儀式を伴う季節の祭り（祭）。'}},
+    ],
+    events:{pl:['Shogatsu (Nowy Rok japoński)','Setsubun (3 lutego)','Hanami (Święto wiśni)','Obon (Festiwal przodków)','Shichi-Go-San','Matsuri sezonowe','Misogi (oczyszczenie)'],en:['Shogatsu (Japanese New Year)','Setsubun (3 February)','Hanami (Cherry Blossom)','Obon (Ancestor Festival)','Shichi-Go-San','Seasonal Matsuri','Misogi (Purification)'],ar:['شوغاتسو (رأس السنة اليابانية)','سيتسوبون (3 فبراير)','هانامي (مهرجان الكرز)','أوبون (مهرجان الأجداد)','شيتشي-غو-سان','ماتسوري الموسمي','ميسوغي (التطهير)'],he:['שוגאטסו (שנה חדשה יפנית)','סצובון (3 בפברואר)','האנאמי (פסטיבל הדובדבן)','אובון (פסטיבל האבות)','שיצ\'י-גו-סאן','מאטסורי עונתי','מיסוגי (טיהור)'],ja:['正月（新年）','節分（2月3日）','花見','お盆','七五三','季節の祭り','禊（みそぎ）']},
+    staffLabel:{pl:'Nasz Kapłan',en:'Our Priest',ar:'كاهننا',he:'הכוהן שלנו',ja:'神主'},
+    staff:[{icon:'⛩️',names:{pl:'Kannagi (Kapłan Shinto)',en:'Kannagi (Shinto Priest)',ar:'كانّاغي (كاهن شنتو)',he:'קנאגי (כוהן שינטו)',ja:'神主（かんなぎ）'}}]
+  },
+  buddhism:{
+    icon:'☸️',
+    bg:'linear-gradient(160deg,#0d2b0d 0%,#1a7a2a 40%,#c0392b 100%)',
+    c1:'#c0392b',c2:'#1a7a2a',bodyBg:'#0a1a0a',cardBg:'rgba(192,57,43,0.08)',textColor:'#d0ffd0',
+    ac:'#c0392b',
+    titles:{pl:'Buddyzm',en:'Buddhism',ar:'البوذية',he:'בודהיזם',ja:'仏教'},
+    intros:{
+      pl:'Witamy wszystkich poszukujących spokoju i oświecenia. Nasza sala medytacyjna jest miejscem ciszy, skupienia i praktyki Dharmy. Przyjmujemy tradycje theravada, mahayana i vajrayana. Regularne sesje medytacyjne, nauki Buddy i rekolekcje.',
+      en:'Welcome all who seek peace and enlightenment. Our meditation hall is a place of silence, focus and Dharma practice. We welcome Theravada, Mahayana and Vajrayana traditions. Regular meditation sessions, Buddha\'s teachings and retreats.',
+      ar:'مرحباً بجميع الساعين إلى السلام والتنوير. قاعة التأمل مكان للصمت والتركيز وممارسة الدارما.',
+      he:'ברוכים הבאים כל המחפשים שלווה והארה. אולם המדיטציה שלנו הוא מקום של שקט, מיקוד ותרגול הדהארמה.',
+      ja:'平和と悟りを求めるすべての方を歓迎します。瞑想ホールは静寂、集中、ダルマ実践の場です。上座部、大乗、金剛乗の伝統を受け入れます。'
+    },
+    cards:[
+      {icon:'🧘',titles:{pl:'Sala Medytacji',en:'Meditation Hall',ar:'قاعة التأمل',he:'אולם המדיטציה',ja:'瞑想ホール'},descs:{pl:'Spokojna sala z poduszkami zafu, ołtarzem z Buddą i aromaterapią. Cisza obowiązkowa.',en:'Peaceful hall with zafu cushions, Buddha altar and aromatherapy. Silence required.',ar:'قاعة هادئة مع وسائد زافو ومذبح بوذا وعلاج بالرائحة.',he:'אולם שקט עם כריות זאפו, מזבח בודה וארומתרפיה.',ja:'坐蒲（ざふ）クッション、仏壇、アロマセラピーを備えた静かなホール。'}},
+      {icon:'☸️',titles:{pl:'Cztery Szlachetne Prawdy',en:'Four Noble Truths',ar:'الحقائق الأربع النبيلة',he:'ארבע האמיתות הנאצלות',ja:'四聖諦'},descs:{pl:'Nauki o dukkha (cierpieniu), jego przyczynie, ustaniu i Ośmiorakiej Ścieżce.',en:'Teachings on dukkha (suffering), its cause, cessation and the Noble Eightfold Path.',ar:'تعاليم عن الدوكها (المعاناة) وسببها وانتهائها والمسار الثماني.',he:'תורות על דוקהה (סבל), סיבתה, פסיקתה ודרך השמיני.',ja:'苦（ドゥッカ）、集（苦の原因）、滅（苦の消滅）、道（八正道）の教え。'}},
+      {icon:'🪷',titles:{pl:'Rekolekcje',en:'Retreats',ar:'الخلوات',he:'ריטריטים',ja:'リトリート'},descs:{pl:'Całodniowe i weekendowe rekolekcje medytacyjne w ciszy i bliskości natury Beskidów.',en:'Full-day and weekend meditation retreats in silence amidst the Beskidy nature.',ar:'خلوات تأملية لمدة يوم كامل وعطلة نهاية أسبوع في صمت وسط طبيعة بيسكيدي.',he:'ריטריטים של יום מלא וסוף שבוע בשקט בחיק הטבע.',ja:'ベスキディ山地の自然の中での終日・週末瞑想リトリート。'}},
+      {icon:'🫶',titles:{pl:'Metta (Miłująca Dobroć)',en:'Metta (Loving Kindness)',ar:'ميتا (اللطف المحب)',he:'מטא (חמלה)',ja:'慈悲（じひ）'},descs:{pl:'Medytacja metta – praktykowanie miłości i współczucia wobec wszystkich istot.',en:'Metta meditation – cultivating love and compassion for all beings.',ar:'تأمل ميتا – تنمية الحب والتعاطف تجاه جميع الكائنات.',he:'מדיטציית מטא – טיפוח אהבה וחמלה כלפי כל הישויות.',ja:'慈悲の瞑想──すべての生き物への愛と慈悲を育む実践。'}},
+    ],
+    events:{pl:['Poranna medytacja (codziennie)','Nauki Dharmy (tygodniowo)','Vesak (Narodziny Buddy)','Rekolekcje weekendowe','Vipassana (7-dniowe)','Losar (Nowy Rok Tybetański)'],en:['Morning Meditation (daily)','Dharma Teachings (weekly)','Vesak (Buddha\'s Birthday)','Weekend Retreats','Vipassana (7-day)','Losar (Tibetan New Year)'],ar:['التأمل الصباحي (يومياً)','تعاليم الدارما (أسبوعياً)','فيساك (عيد ميلاد بوذا)','خلوات نهاية الأسبوع','فيباسانا (7 أيام)','لوسار (رأس السنة التيبتية)'],he:['מדיטציה בוקר (יומית)','תורות דהארמה (שבועיות)','וסאק (יום הולדת בודה)','ריטריטים לסוף שבוע','ויפאסנה (7 ימים)','לוסאר (שנה חדשה טיבטית)'],ja:['朝の瞑想（毎日）','ダルマの教え（毎週）','ウェーサーカ（仏誕節）','週末リトリート','ヴィパッサナー（7日間）','ロサル（チベット正月）']},
+    staffLabel:{pl:'Nasz Nauczyciel',en:'Our Teacher',ar:'معلمنا',he:'המורה שלנו',ja:'指導者'},
+    staff:[{icon:'☸️',names:{pl:'Mnich/Nauczyciel Dharmy',en:'Monk / Dharma Teacher',ar:'راهب / معلم الدارما',he:'נזיר / מורה דהארמה',ja:'僧侶／ダルマ指導者'}}]
+  },
+  other:{
+    icon:'🌍',
+    bg:'linear-gradient(160deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)',
+    c1:'#e94560',c2:'#0f3460',bodyBg:'#0a0a1a',cardBg:'rgba(233,69,96,0.08)',textColor:'#c0d0ff',
+    ac:'#e94560',
+    titles:{pl:'Inne Wyznania',en:'Other Faiths',ar:'أديان أخرى',he:'דתות אחרות',ja:'その他の宗教'},
+    intros:{
+      pl:'Nasz dom jest otwarty na każdą tradycję duchową. Hinduizm, sikhizm, taoizm, zoroastryzm i każda inna wiara – wszystkie są mile widziane. Skontaktuj się z nami, aby omówić Twoje potrzeby.',
+      en:'Our house is open to every spiritual tradition. Hinduism, Sikhism, Taoism, Zoroastrianism and every other faith – all are welcome. Contact us to discuss your needs.',
+      ar:'بيتنا مفتوح لكل تقليد روحي. الهندوسية والسيخية والطاوية والزرادشتية وكل دين آخر – الجميع مرحب بهم.',
+      he:'ביתנו פתוח לכל מסורת רוחנית. הינדואיזם, סיקיזם, טאואיזם, זרתוסטריות וכל אמונה אחרת – הכל מוזמן.',
+      ja:'私たちの家はすべての精神的伝統に開かれています。ヒンドゥー教、シク教、道教、ゾロアスター教など──すべての信仰を歓迎します。'
+    },
+    cards:[
+      {icon:'🕉️',titles:{pl:'Hinduizm',en:'Hinduism',ar:'الهندوسية',he:'הינדואיזם',ja:'ヒンドゥー教'},descs:{pl:'Puja, medytacja, joga i studium Wed. Przestrzeń do rytuałów wedyjskich.',en:'Puja, meditation, yoga and Vedic study. Space for Vedic rituals.',ar:'بوجا وتأمل ويوغا ودراسة فيدية.',he:'פוג\'א, מדיטציה, יוגה ולימוד וודי.',ja:'プジャ、瞑想、ヨガ、ヴェーダの学習。'}},
+      {icon:'🪯',titles:{pl:'Sikhizm',en:'Sikhism',ar:'السيخية',he:'סיקיזם',ja:'シク教'},descs:{pl:'Kirtan (śpiew religijny), czytanie Guru Granth Sahib i langar (wspólny posiłek).',en:'Kirtan (devotional singing), Guru Granth Sahib reading and langar (communal meal).',ar:'كيرتان والقراءة من جورو غرانث صاحب واللانغار.',he:'קירטן, קריאת גורו גראנת\' סאהיב ולנגאר (ארוחה קהילתית).',ja:'キルタン、グル・グラント・サーヒブの朗読、ランガル（共同食事）。'}},
+      {icon:'☯️',titles:{pl:'Taoizm',en:'Taoism',ar:'الطاوية',he:'טאואיזם',ja:'道教'},descs:{pl:'Medytacja taoistyczna, Tai Chi, I Ching i harmonia z Tao.',en:'Taoist meditation, Tai Chi, I Ching and harmony with the Tao.',ar:'تأمل تاوي وتاي تشي وآي تشينغ والانسجام مع التاو.',he:'מדיטציה טאואיסטית, טאי צ\'י, אי-צ\'ינג והרמוניה עם הטאו.',ja:'道教の瞑想、太極拳、易経、道との調和。'}},
+      {icon:'🔥',titles:{pl:'Inne',en:'Others',ar:'أخرى',he:'אחרים',ja:'その他'},descs:{pl:'Zoroastryzm, bahai, animizm i inne tradycje – skontaktuj się z nami, znajdziemy dla Ciebie przestrzeń.',en:'Zoroastrianism, Baha\'i, animism and other traditions – contact us and we\'ll find a space for you.',ar:'زرادشتية وبهائية وأنيميزم وتقاليد أخرى – تواصل معنا وسنجد مكاناً لك.',he:'זרתוסטריות, בהאי, אנימיזם ומסורות אחרות – צרו קשר ונמצא לכם מקום.',ja:'ゾロアスター教、バハーイー教、アニミズムなど──ご連絡ください。場所を確保します。'}},
+    ],
+    events:{pl:['Diwali (Hinduizm)','Vaisakhi (Sikhizm)','Nawruz (Zoroastryzm)','Ridvan (Bahai)','Losar (Tybetański NY)','Rytuały na zamówienie'],en:['Diwali (Hinduism)','Vaisakhi (Sikhism)','Nowruz (Zoroastrianism)','Ridvan (Baha\'i)','Losar (Tibetan NY)','Custom Rituals'],ar:['ديوالي (هندوسية)','فيساخي (سيخية)','نوروز (زرادشتية)','ريدفان (بهائية)','لوسار (السنة الجديدة التيبتية)','طقوس مخصصة'],he:['דיוואלי (הינדואיזם)','ויסאקי (סיקיזם)','נורוז (זרתוסטריות)','רידוואן (בהאי)','לוסאר (שנה חדשה טיבטית)','טקסים מותאמים אישית'],ja:['ディワーリー（ヒンドゥー教）','ヴァイサーキー（シク教）','ノウルーズ（ゾロアスター教）','リドワン（バハーイー教）','ロサル（チベット正月）','カスタム儀式']},
+    staffLabel:{pl:'Kontakt',en:'Contact',ar:'تواصل',he:'צור קשר',ja:'お問い合わせ'},
+    staff:[{icon:'🌍',names:{pl:'Koordynator Wyznań',en:'Faith Coordinator',ar:'منسق الأديان',he:'רכז הדתות',ja:'信仰コーディネーター'}}]
+  }
+};
+
+let curLang = 'pl';
+
+function setLang(l) {
+  curLang = l;
+  document.documentElement.lang = l;
+  document.documentElement.dir = (l==='ar'||l==='he') ? 'rtl' : 'ltr';
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  ['pl','en','ar','he','ja'].forEach((code,i) => {
+    if(code===l) document.querySelectorAll('.lang-btn')[i].classList.add('active');
+  });
+  const d = lang[l];
+  for(const k in d) {
+    const el = document.getElementById(k);
+    if(el) el.innerHTML = d[k];
+  }
+  // If on faith page, re-render
+  const fp = document.getElementById('faith-page');
+  if(fp.classList.contains('active') && window._curFaith) {
+    renderFaithPage(window._curFaith);
+  }
+}
+
+function goHome() {
+  document.getElementById('home').classList.add('active');
+  document.getElementById('faith-page').classList.remove('active');
+  document.body.style.background = '#0f0f0f';
+  document.documentElement.style.setProperty('--ac','#c08e51');
+  window._curFaith = null;
+  window.scrollTo(0,0);
+}
+
+function goFaith(key) {
+  window._curFaith = key;
+  renderFaithPage(key);
+  document.getElementById('home').classList.remove('active');
+  document.getElementById('faith-page').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function renderFaithPage(key) {
+  const f = faithData[key];
+  const l = curLang;
+
+  // Set colors
+  document.documentElement.style.setProperty('--ac', f.ac);
+  document.body.style.background = f.bodyBg;
+
+  // Hero
+  document.getElementById('fp-hero').style.background = f.bg;
+  document.getElementById('fp-icon').textContent = f.icon;
+  document.getElementById('fp-title').textContent = f.titles[l];
+  document.getElementById('fp-intro').textContent = f.intros[l];
+  document.getElementById('fp-back').textContent = lang[l]['fp-back'];
+  document.getElementById('fp-footer').innerHTML = lang[l]['fp-footer'];
+
+  // Body
+  const body = document.getElementById('fp-body');
+  body.style.color = f.textColor;
+
+  // Cards
+  const cardsHTML = f.cards.map(c => `
+    <div class="fp-card" style="background:${f.cardBg};border-color:${f.c1}33;">
+      <div class="fpc-icon">${c.icon}</div>
+      <h3 style="color:${f.c1};">${c.titles[l]}</h3>
+      <p>${c.descs[l]}</p>
+    </div>`).join('');
+
+  // Events
+  const eventsHTML = f.events[l].map(e =>
+    `<div class="ev-pill" style="background:${f.cardBg};color:${f.c1};border-color:${f.c1}55;">${e}</div>`
+  ).join('');
+
+  // Staff
+  const staffHTML = f.staff.map(s =>
+    `<div class="staff-pill" style="background:${f.cardBg};border-color:${f.c1}33;color:${f.textColor};">
+      <span style="font-size:1.3rem;">${s.icon}</span> ${s.names[l]}
+    </div>`
+  ).join('');
+
+  const evTitle = {pl:'Nasze Wydarzenie',en:'Our Events',ar:'فعالياتنا',he:'האירועים שלנו',ja:'イベント'};
+  const staffTitle = f.staffLabel[l];
+
+  body.innerHTML = `
+    <div class="fp-grid">${cardsHTML}</div>
+    <div class="fp-events">
+      <h2 style="color:${f.c1};">${evTitle[l]}</h2>
+      <div class="events-row">${eventsHTML}</div>
+    </div>
+    <div class="fp-staff">
+      <h2 style="color:${f.c1};">${staffTitle}</h2>
+      <div class="staff-row">${staffHTML}</div>
+    </div>
+    <div style="text-align:center;padding:20px 0;">
+      <button class="back-btn" onclick="goHome()" style="border-color:${f.c1};color:${f.c1};">← ${lang[l]['fp-back']}</button>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
